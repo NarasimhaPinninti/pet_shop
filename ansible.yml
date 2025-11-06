@@ -11,22 +11,28 @@
      service:
         name: docker
         state: started
+   - name: docker image building from Dockerfile
+     community.docker.docker_image:
+         name: narasimha
+         path: /home/ec2-user/jenkins/jenkins/workspace/ansible
+         state: present
+     
    - name: rempove existing containers
      docker_container:
-           name: "naidu{{ item }}"
-           state: absent
-      loop:
+         name: "naidu{{ item }}"
+         state: absent
+     loop:
          - 1
          - 2
          - 3
-    - name: creating containers
-      docker_container:
-           name: "naidu{{ item }}"
-           image: narasimha
-           ports:
+   - name: creating containers
+     docker_container:
+          name: "naidu{{ item }}"
+          image: narasimha
+          ports:
              - "808{{ item }}:8080"
-           state: started
-      loop:
+          state: started
+     loop:
          - 1
          - 2
          - 3
