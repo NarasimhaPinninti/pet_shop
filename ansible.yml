@@ -40,7 +40,7 @@
         source: build        # ✅ this line is required
         build:
           path: /opt/app     # ✅ correct build context
-          state: present
+        state: present
      
     - name: remove existing containers
       community.docker.docker_container:
