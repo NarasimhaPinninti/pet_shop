@@ -1,0 +1,32 @@
+---
+- name: install docker and deploye with containers
+  hosts: any
+  become: yes
+  tasks:
+   - name: install docker
+     yum:
+       name: docker
+       state: present
+   - name: start docker service
+     service:
+        name: docker
+        state: started
+   - name: rempove existing containers
+     docker_container:
+           name: "naidu{{ item }}"
+           state: absent
+      loop:
+         - 1
+         - 2
+         - 3
+    - name: creating containers
+      docker_container:
+           name: "naidu{{ item }}"
+           image: narasimha
+           ports:
+             - "808{{ item }}:8080"
+           state: started
+      loop:
+         - 1
+         - 2
+         - 3
