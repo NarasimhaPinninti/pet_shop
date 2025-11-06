@@ -1,56 +1,66 @@
 ---
-- name: install docker and deploye with containers
+- name: install docker and deploy containers
   hosts: all
   become: yes
   tasks:
-   - name: install docker
-     yum:
-       name: docker
-       state: present
+
+    - name: install docker
+      yum:
+        name: docker
+        state: present
        
-   - name: start docker service
-     service:
+    - name: start docker service
+      service:
         name: docker
         state: started
 
-   - name: directory exists
-     file:
+    - name: ensure /opt/app directory exists
+      file:
         path: /opt/app
         state: directory
         mode: '0755'
-   - name: copy docker file and war file for deployment
-     copy:
-          src: /home/ec2-user/jenkins/jenkins/workspace/ansible/Dockerfile
-          dest: /opt/app/Dockerfile
-          owner: root
-          group: root
 
-   - name: copying war file
-     copy:
-         src: /home/ec2-user/jenkins/jenkins/workspace/ansible/target/petshop.war
-         dest: /opt/app/petshop.war
-   - name: docker image building from Dockerfile
-     community.docker.docker_image:
-         name: narasimha
-         path: /opt/app/
-         state: present
+    - name: copy Dockerfile for deployment
+      copy:
+        src: /home/ec2-user/jenkins/jenkins/workspace/ansible/Dockerfile
+        dest: /opt/app/Dockerfile
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: copy WAR file
+      copy:
+        src: /home/ec2-user/jenkins/jenkins/workspace/ansible/target/petshop.war
+        dest: /opt/app/petshop.war
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: build docker image from Dockerfile
+      community.docker.docker_image:
+        name: narasimha
+        source: build        # ✅ this line is required
+        build:
+          path: /opt/app     # ✅ correct build context
+        state: present
      
-   - name: rempove existing containers
-     docker_container:
-         name: "naidu{{ item }}"
-         state: absent
-     loop:
-         - 1
-         - 2
-         - 3
-   - name: creating containers
-     docker_container:
-          name: "naidu{{ item }}"
-          image: narasimha
-          ports:
-             - "808{{ item }}:8080"
-          state: started
-     loop:
-         - 1
-         - 2
-         - 3
+    - name: remove existing containers
+      community.docker.docker_container:
+        name: "naidu{{ item }}"
+        state: absent
+      loop:
+        - 1
+        - 2
+        - 3
+
+    - name: create containers
+      community.docker.docker_container:
+        name: "naidu{{ item }}"
+        image: narasimha
+        ports:
+          - "808{{ item }}:8080"
+        state: started
+      loop:
+        - 1
+        - 2
+        - 3
