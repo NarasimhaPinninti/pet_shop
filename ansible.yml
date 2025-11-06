@@ -12,12 +12,23 @@
      service:
         name: docker
         state: started
+
+   - name: directory exists
+     file:
+        path: /opt/app
+        state: directory
+        mode: '0755'
    - name: copy docker file and war file for deployment
      copy:
-        src: /home/ec2-user/jenkins/jenkins/workspace/ansible/
-        dest: /opt/app
-        owner: root
-        group: root
+          src: /home/ec2-user/jenkins/jenkins/workspace/ansible/Dockerfile
+          dest: /opt/app/Dockerfile
+          owner: root
+          group: root
+
+   - name: copying war file
+     copy:
+         src: /home/ec2-user/jenkins/jenkins/workspace/ansible/target/petshop.war
+         dest: /opt/app/petshop.war
    - name: docker image building from Dockerfile
      community.docker.docker_image:
          name: narasimha
