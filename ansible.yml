@@ -21,7 +21,7 @@
    - name: docker image building from Dockerfile
      community.docker.docker_image:
          name: narasimha
-         path: /home/ec2-user/jenkins/jenkins/workspace/ansible
+         path: /opt/app
          state: present
      
    - name: rempove existing containers
