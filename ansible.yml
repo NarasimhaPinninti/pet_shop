@@ -14,14 +14,14 @@
         state: started
    - name: copy docker file and war file for deployment
      copy:
-        src: /home/ec2-user/jenkins/jenkins/workspace/ansible
-        dest: /opt/app/
+        src: /home/ec2-user/jenkins/jenkins/workspace/ansible/
+        dest: /opt/app
         owner: root
         group: root
    - name: docker image building from Dockerfile
      community.docker.docker_image:
          name: narasimha
-         path: /opt/app
+         path: /opt/app/
          state: present
      
    - name: rempove existing containers
