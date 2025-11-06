@@ -1,6 +1,6 @@
 ---
 - name: install docker and deploye with containers
-  hosts: any
+  hosts: all
   become: yes
   tasks:
    - name: install docker
