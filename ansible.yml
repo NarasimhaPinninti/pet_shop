@@ -14,7 +14,7 @@
         name: docker
         state: started
 
-    - name: ensure /opt/app directory exists
+    - name: check /opt/app directory exists
       file:
         path: /opt/app
         state: directory
@@ -26,7 +26,6 @@
         dest: /opt/app/Dockerfile
         owner: root
         group: root
-        mode: '0644'
 
     - name: copy WAR file
       copy:
@@ -34,7 +33,6 @@
         dest: /opt/app/petshop.war
         owner: root
         group: root
-        mode: '0644'
 
     - name: build docker image from Dockerfile
       community.docker.docker_image:
@@ -42,7 +40,7 @@
         source: build        # ✅ this line is required
         build:
           path: /opt/app     # ✅ correct build context
-        state: present
+          state: present
      
     - name: remove existing containers
       community.docker.docker_container:
